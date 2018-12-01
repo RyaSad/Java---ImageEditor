@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
+   <children>
+      <Slider fx:id="slider_red" blockIncrement="1.0" layoutX="64.0" layoutY="448.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
+      <Slider fx:id="slider_green" blockIncrement="1.0" layoutX="64.0" layoutY="482.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
+      <Slider fx:id="slider_blue" blockIncrement="1.0" layoutX="64.0" layoutY="515.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
+      <Button fx:id="button_export" layoutX="391.0" layoutY="652.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="34.0" prefWidth="200.0" text="Export Image" />
+      <Text fill="RED" layoutX="39.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Red" />
+      <Text fill="#00a416" layoutX="32.0" layoutY="492.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Green" />
+      <Text fill="#0028ff" layoutX="37.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Blue" />
+      <ProgressBar fx:id="progress_export" layoutX="391.0" layoutY="612.0" prefWidth="200.0" progress="0.0" />
+      <Text fx:id="progress_export_text" layoutX="15.0" layoutY="598.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Exporting Image" textAlignment="CENTER" wrappingWidth="952.9999886751175" />
+      <ImageView fx:id="image_display" fitHeight="420.0" fitWidth="820.0" layoutX="82.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="button_import" layoutX="858.0" layoutY="652.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="34.0" prefWidth="110.0" text="Import Image" />
+      <Text fx:id="text_redValue" layoutX="242.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="255" />
+      <Text fx:id="text_greenValue" layoutX="242.0" layoutY="493.0" strokeType="OUTSIDE" strokeWidth="0.0" text="255" />
+      <Text fx:id="text_blueValue" layoutX="242.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="255" />
+      <Slider fx:id="slider_contrast" blockIncrement="0.1" layoutX="405.0" layoutY="515.0" max="1.0" min="-1.0" prefHeight="14.0" prefWidth="173.0" />
+      <Slider fx:id="slider_brightness" blockIncrement="1.0" layoutX="405.0" layoutY="547.0" max="1.0" min="-1.0" prefHeight="14.0" prefWidth="173.0" value="0.0" />
+      <Slider fx:id="slider_saturation" blockIncrement="1.0" layoutX="406.0" layoutY="481.0" max="1.0" min="-1.0" prefHeight="14.0" prefWidth="173.0" value="0.0" />
+      <Text fill="#1e1e1e" layoutX="352.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contrast" />
+      <Text fx:id="text_contrastValue" layoutX="585.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0" />
+      <Slider fx:id="slider_hue" blockIncrement="1.0" layoutX="404.0" layoutY="448.0" max="1.0" prefHeight="14.0" prefWidth="173.0" value="0.0" />
+      <Text fill="#1e1e1e" layoutX="346.0" layoutY="558.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Brightness" />
+      <Text fill="#1e1e1e" layoutX="347.0" layoutY="494.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saturation" />
+      <Text fill="#1e1e1e" layoutX="363.0" layoutY="459.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hue" wrappingWidth="22.851574420928955" />
+      <Text fx:id="text_brightnessValue" layoutX="585.0" layoutY="558.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0" />
+      <Text fx:id="text_saturationValue" layoutX="585.0" layoutY="492.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0" />
+      <Text fx:id="text_hueValue" layoutX="585.0" layoutY="459.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0" />
+      <Slider fx:id="slider_scramble" blockIncrement="0.1" layoutX="728.0" layoutY="448.0" max="1.0" prefHeight="14.0" prefWidth="173.0" />
+      <Text fill="#1e1e1e" layoutX="672.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Scramble" />
+      <Text fx:id="text_scrambleValue" layoutX="905.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0" />
+      <RadioButton fx:id="toggle_none" layoutX="14.0" layoutY="545.0" mnemonicParsing="false" selected="true" text="RGB">
+         <toggleGroup>
+            <ToggleGroup fx:id="fx_group" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="toggle_greyscale" layoutX="78.0" layoutY="545.0" mnemonicParsing="false" text="GreyScale" toggleGroup="$fx_group" />
+      <RadioButton fx:id="toggle_sepia" layoutX="170.0" layoutY="545.0" mnemonicParsing="false" text="Sepia" toggleGroup="$fx_group" />
+      <RadioButton fx:id="toggle_invert" layoutX="235.0" layoutY="545.0" mnemonicParsing="false" text="Invert" toggleGroup="$fx_group" />
+      <Button fx:id="button_openWorkspace" layoutX="11.0" layoutY="652.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="34.0" prefWidth="150.0" text="Open Project Workspace" />
+      <Text fill="#1e1e1e" layoutX="656.0" layoutY="558.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load Preset:" />
+      <ComboBox fx:id="dropdown_presets" layoutX="728.0" layoutY="541.0" prefWidth="150.0" />
+      <Button fx:id="button_newPreset" layoutX="889.0" layoutY="541.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="32.0" text="+" />
+      <Button fx:id="button_deletePreset" layoutX="934.0" layoutY="541.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="32.0" text="-" />
+      <Button fx:id="button_randomize" layoutX="765.0" layoutY="503.0" mnemonicParsing="false" onAction="#ButtonAction" text="Randomize" />
+   </children>
+</AnchorPane>
