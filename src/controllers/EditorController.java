@@ -1,6 +1,8 @@
 package controllers;
 
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -36,7 +38,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.AppData;
 import model.DefaultPreset;
-import model.DefaultPreset.BadPreset;
+import model.FilterProperties;
 import model.MyImage;
 import model.Preset;
 import tasks.ExportTask;
@@ -358,10 +360,8 @@ public class EditorController {
 			return;
 		}
 		
-		Image i = thisImage.applyGlobalFilter((int)slider_red.getValue(), (int)slider_green.getValue(), (int)slider_blue.getValue(),
-				(float) slider_contrast.getValue() + 1, (float) slider_brightness.getValue(), (float) slider_saturation.getValue(), (float) slider_hue.getValue(),
-				isToggle(toggle_greyscale), isToggle(toggle_sepia), isToggle(toggle_invert), (float) slider_scramble.getValue());
-		fxImage = i;
+		Image i = thisImage.applyGlobalFilter(buildFilterProperties());
+		//fxImage = i;
 		image_display.setImage(i);
 	}
 	
@@ -399,6 +399,17 @@ public class EditorController {
 			resetSliders();
 			centerImage();
 			
+			BufferedImage reScaled = scaleDown(image_display.getImage());
+			Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
+			
+			//fxImage = updatedImage;
+			thisImage.setNewImage(reScaled);
+			image_display.setImage(updatedImage);
+			
+			System.out.println("Width: " + updatedImage.getWidth());
+			System.out.println("Height: " + updatedImage.getHeight());
+			centerImage();
+			
 		}
 		else if(b == button_export) {
 			if(thisImage == null) {
@@ -411,11 +422,12 @@ public class EditorController {
 				return;
 			}
 			
-	        Task<Void> exportTask = new ExportTask(SwingFXUtils.fromFXImage(fxImage, null), progress_export, progress_export_text, filepath);
+			BufferedImage toExport = SwingFXUtils.fromFXImage(fxImage, null);
+			thisImage.image = toExport;
+	        Task<Void> exportTask = new ExportTask(toExport, buildFilterProperties(), progress_export, progress_export_text, filepath);
 	        Thread exportThread = new Thread(exportTask);
 	        exportThread.setDaemon(true);
 	        exportThread.start();
-
 		}
 		else if(b == button_openWorkspace) {
 			Runtime.getRuntime().exec("explorer.exe " + System.getProperty("user.dir"));
@@ -641,4 +653,39 @@ public class EditorController {
 
         }
     }
+	
+	public FilterProperties buildFilterProperties() {
+		return new FilterProperties((int)slider_red.getValue(), (int)slider_green.getValue(), (int)slider_blue.getValue(),
+				(float) slider_contrast.getValue() + 1, (float) slider_brightness.getValue(), (float) slider_saturation.getValue(), (float) slider_hue.getValue(),
+				isToggle(toggle_greyscale), isToggle(toggle_sepia), isToggle(toggle_invert), (float) slider_scramble.getValue());
+	}
+	
+	
+	public BufferedImage scaleDown(Image image) {
+		double maxP = 720.0;
+		
+		int scaleFactor = (int) Math.round(Math.max(image.getWidth(), image.getHeight()) / maxP);
+		
+		if(scaleFactor < 1) {
+			scaleFactor = 1;
+		}
+		
+		BufferedImage img = new BufferedImage((int)image.getWidth()/scaleFactor, (int)image.getHeight()/scaleFactor, BufferedImage.TYPE_INT_ARGB);
+		
+		for(int i = 0; i < (int)img.getHeight(); i++) {
+			for(int j = 0; j < (int)img.getWidth(); j++) {
+			//	if(j*scaleFactor > (int) image.getWidth() || i*scaleFactor > (int) image.getHeight()) {
+			//		break;
+			//	}
+				
+				javafx.scene.paint.Color c = image.getPixelReader().getColor(j*scaleFactor, i*scaleFactor);
+				
+				Color cc = new Color((int)(c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+				
+				img.setRGB(j, i, cc.getRGB());
+			}
+		}
+		
+		return img;
+	}
 }

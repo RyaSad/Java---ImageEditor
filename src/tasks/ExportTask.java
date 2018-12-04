@@ -8,25 +8,33 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.text.Text;
+import model.FilterProperties;
 import model.MyImage;
 
 public class ExportTask extends Task<Void>{
 
 	private BufferedImage img;
+	private FilterProperties fp;
 	private ProgressBar bar;
 	private Text progText;
 	private String filepath;
+	private MyImage mi;
 	
-	public ExportTask(BufferedImage img, ProgressBar bar, Text progText, String filepath) {
-		this.img = img;
+	public ExportTask(BufferedImage img, FilterProperties fp, ProgressBar bar, Text progText, String filepath) {
 		this.bar = bar;
 		this.filepath = filepath;
 		this.progText = progText;
+		this.fp = fp;
+		
+		this.mi = new MyImage(img);
+		this.img = SwingFXUtils.fromFXImage(mi.applyGlobalFilter(this.fp), null);
+		
 	}
 	
 	@Override

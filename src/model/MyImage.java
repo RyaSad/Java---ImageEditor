@@ -9,16 +9,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
+import tasks.FilterTask;
 
 public class MyImage{
 
@@ -37,17 +37,16 @@ public class MyImage{
 	public int totalG = 0;
 	public int totalB = 0;
 	
-	private int r;
-	private int g;
-	private int b;
-	private float cLevel;
-	private float bLevel;
-	private float sat;
-	private float hue;
-	private boolean greyscale;
-	private boolean sepia;
-	private boolean invert;
-	private float scramble_factor;
+	private FilterProperties fp;
+	
+	
+	public MyImage(BufferedImage bi) {
+		this.image = bi;
+		this.image_width = bi.getWidth();
+		this.image_height = bi.getHeight();
+		this.total_pixels = this.image_height * this.image_width;
+	}
+
 	
 	public MyImage(String filepath) {
 		
@@ -65,47 +64,78 @@ public class MyImage{
 		this.total_pixels = this.image_height * this.image_width;
 
 	}
+	
+	public void setNewImage(BufferedImage bi) {
+		this.image = bi;
+		this.image_width = bi.getWidth();
+		this.image_height = bi.getHeight();
+		this.total_pixels = bi.getWidth() * bi.getHeight();
+	}
 
 
-	public Image applyGlobalFilter(int r, int g, int b, float cLevel, float bLevel, float sat, float hue, boolean greyscale, boolean sepia, boolean invert, float scramble_factor) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.cLevel = cLevel;
-		this.bLevel = bLevel;
-		this.sat = sat;
-		this.hue = hue;
-		this.greyscale = greyscale;
-		this.sepia = sepia;
-		this.invert = invert;
-		this.scramble_factor = scramble_factor;
+	public Image applyGlobalFilter(FilterProperties fp) {
+		this.fp = fp;
 		
 		this.tempImage = deepCopy(this.image);
 		
-		ChangePixels(this.tempImage, 0, this.image_width, 0, this.image_height); // Full scale
-		
-		//ChangePixels(this.tempImage, 0, this.image_width, 0, this.image_height/10); // Thread 1
-		
-		//ChangePixels(this.tempImage, this.image_width/2, this.image_width, 0, this.image_height/2); // Thread 2
-		
-		//ChangePixels(this.tempImage, this.image_width/2, this.image_width, this.image_height/2, this.image_height); // Thread 3
-		
-		//ChangePixels(this.tempImage, 0, this.image_width/2, this.image_height/2, this.image_height); // Thread 4
+		long startTime = System.currentTimeMillis();
 		
 		
-		if(this.cLevel != 1.0) {
-			RescaleOp rescaleOp = new RescaleOp(this.cLevel, 20, null);
+		int procs = Runtime.getRuntime().availableProcessors();
+		runThreads(4);
+		
+		
+		long runTime = System.currentTimeMillis() - startTime;
+		double timeSeconds = (double) runTime / 1000;
+		
+		//System.out.println("Time took: " + timeSeconds + " seconds");
+		
+		if(this.fp.cLevel != 1.0) {
+			RescaleOp rescaleOp = new RescaleOp(this.fp.cLevel, 20, null);
 			rescaleOp.filter(tempImage, tempImage);
 		}
 		Image updatedImage = SwingFXUtils.toFXImage(tempImage, null);
 		return updatedImage;
 	}
 	
+	public void runThreads(int nThreads) {
+		Future<?>[] futures = new Future<?>[nThreads];
+		
+		ExecutorService exec = Executors.newFixedThreadPool(nThreads);
+		
+		int height = this.tempImage.getHeight();
+		int interval = height / nThreads;
+		
+		int s = 0; 
+		int e = interval;
+		for(int i = 0; i < nThreads; i++) {
+			futures[i] = exec.submit(new FilterTask(this.tempImage, this.fp, s, e));
+			s = e;
+			e += interval;
+			
+			if(i == nThreads - 2) {
+				e = Math.max(e,height);
+			}
+		}
+		
+		for(Future<?> f: futures) {
+			try {
+				f.get();
+			} catch (InterruptedException | ExecutionException ec) {
+				ec.printStackTrace();
+				System.exit(1);
+			}
+			
+			
+			
+		}
+	}
+	
 	
 	@SuppressWarnings("static-access")
 	public void ChangePixels(BufferedImage image, int startX, int endX, int startY, int endY) {
 		
-		image = scrambleImage(image, scramble_factor); // will need to have function fixed for multi-threading
+		image = scrambleImage(image, fp.scramble_factor); // will need to have function fixed for multi-threading
 		
 		for(int i = startX; i < endX; i++) {
 			for(int j = startY; j < endY; j++) {
@@ -114,7 +144,7 @@ public class MyImage{
 				
 				int rx = 0, gx = 0, bx = 0;
 				
-				if(sepia) {
+				if(fp.sepia) {
 					rx = (int) ((0.393 * (double) c.getRed()) + 0.769 * ((double) c.getGreen()) + 0.189 * ((double) c.getBlue()));
 					gx = (int) ((0.349 * (double) c.getRed()) + 0.686 * ((double) c.getGreen()) + 0.168 * ((double) c.getBlue()));
 					bx = (int) ((0.272 * (double) c.getRed()) + 0.534 * ((double) c.getGreen()) + 0.131 * ((double) c.getBlue()));
@@ -122,29 +152,29 @@ public class MyImage{
 					rx = Math.min(rx, 255);
 					gx = Math.min(gx, 255);
 					bx = Math.min(bx, 255);
-				}else if(greyscale) {
+				}else if(fp.greyscale) {
 					rx = (c.getRed() + c.getGreen() + c.getBlue()) / 3;
 					gx = rx; bx = rx;
-				}else if(invert) {
+				}else if(fp.invert) {
 					rx = 255 - c.getRed();
 					gx = 255 - c.getGreen();
 					bx = 255 - c.getBlue();
 				}else {
-					rx = Math.min(Math.max(0, c.getRed() + r), 255);
-					gx = Math.min(Math.max(0, c.getGreen() + g), 255);
-					bx = Math.min(Math.max(0, c.getBlue() + b), 255);
+					rx = Math.min(Math.max(0, c.getRed() + fp.r), 255);
+					gx = Math.min(Math.max(0, c.getGreen() + fp.g), 255);
+					bx = Math.min(Math.max(0, c.getBlue() + fp.b), 255);
 				}
 			
 				float[] hsb = new float[3];
 				c.RGBtoHSB(rx, gx, bx, hsb);
 				
-				float newSat = Math.min(sat + hsb[1], 1.0f);
-				float newBright = Math.min(bLevel + hsb[2], 1.0f);
+				float newSat = Math.min(fp.sat + hsb[1], 1.0f);
+				float newBright = Math.min(fp.bLevel + hsb[2], 1.0f);
 				
 				newSat = Math.max(newSat, 0.0f);
 				newBright = Math.max(newBright, 0.0f);
 				
-				image.setRGB(i, j, c.HSBtoRGB(hue + hsb[0], newSat, newBright));
+				image.setRGB(i, j, c.HSBtoRGB(fp.hue + hsb[0], newSat, newBright));
 				
 			}
 		}
