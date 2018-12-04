@@ -48,6 +48,9 @@ public class EditorController {
 	@FXML
 	ImageView image_display;
 	
+	@FXML
+	ImageView image_loading;
+	
 	
 	/*	Buttons	*/
 	@FXML
@@ -422,12 +425,14 @@ public class EditorController {
 				return;
 			}
 			
+			BufferedImage temp = thisImage.image;
 			BufferedImage toExport = SwingFXUtils.fromFXImage(fxImage, null);
 			thisImage.image = toExport;
-	        Task<Void> exportTask = new ExportTask(toExport, buildFilterProperties(), progress_export, progress_export_text, filepath);
+	        Task<Void> exportTask = new ExportTask(toExport, buildFilterProperties(), progress_export, progress_export_text, image_loading,  filepath);
 	        Thread exportThread = new Thread(exportTask);
 	        exportThread.setDaemon(true);
 	        exportThread.start();
+	        thisImage.image = temp;
 		}
 		else if(b == button_openWorkspace) {
 			Runtime.getRuntime().exec("explorer.exe " + System.getProperty("user.dir"));
@@ -656,7 +661,7 @@ public class EditorController {
 	
 	public FilterProperties buildFilterProperties() {
 		return new FilterProperties((int)slider_red.getValue(), (int)slider_green.getValue(), (int)slider_blue.getValue(),
-				(float) slider_contrast.getValue() + 1, (float) slider_brightness.getValue(), (float) slider_saturation.getValue(), (float) slider_hue.getValue(),
+				(float) (slider_contrast.getValue() + 1), (float) slider_brightness.getValue(), (float) slider_saturation.getValue(), (float) slider_hue.getValue(),
 				isToggle(toggle_greyscale), isToggle(toggle_sepia), isToggle(toggle_invert), (float) slider_scramble.getValue());
 	}
 	

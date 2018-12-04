@@ -81,8 +81,16 @@ public class MyImage{
 		long startTime = System.currentTimeMillis();
 		
 		
+		if(this.fp.cLevel != 1.0) {
+			System.out.println(this.fp.cLevel);
+			RescaleOp rescaleOp = new RescaleOp(this.fp.cLevel, 0, null);
+			rescaleOp.filter(tempImage, tempImage);
+		}
+		
+		
+		
 		int procs = Runtime.getRuntime().availableProcessors();
-		runThreads(4);
+		//runThreads(procs);
 		
 		
 		long runTime = System.currentTimeMillis() - startTime;
@@ -90,10 +98,7 @@ public class MyImage{
 		
 		//System.out.println("Time took: " + timeSeconds + " seconds");
 		
-		if(this.fp.cLevel != 1.0) {
-			RescaleOp rescaleOp = new RescaleOp(this.fp.cLevel, 20, null);
-			rescaleOp.filter(tempImage, tempImage);
-		}
+		
 		Image updatedImage = SwingFXUtils.toFXImage(tempImage, null);
 		return updatedImage;
 	}

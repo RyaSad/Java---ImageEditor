@@ -1,5 +1,6 @@
 package app;
 	
+import java.beans.Statement;
 import java.util.Random;
 
 import javafx.application.Application;
@@ -27,6 +28,7 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 		
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 		    @Override

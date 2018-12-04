@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import model.FilterProperties;
 import model.MyImage;
@@ -26,7 +28,9 @@ public class ExportTask extends Task<Void>{
 	private String filepath;
 	private MyImage mi;
 	
-	public ExportTask(BufferedImage img, FilterProperties fp, ProgressBar bar, Text progText, String filepath) {
+	private ImageView loading_image;
+	
+	public ExportTask(BufferedImage img, FilterProperties fp, ProgressBar bar, Text progText, ImageView loading, String filepath) {
 		this.bar = bar;
 		this.filepath = filepath;
 		this.progText = progText;
@@ -34,15 +38,18 @@ public class ExportTask extends Task<Void>{
 		
 		this.mi = new MyImage(img);
 		this.img = SwingFXUtils.fromFXImage(mi.applyGlobalFilter(this.fp), null);
-		
+		this.loading_image = loading;
 	}
 	
 	@Override
 	protected Void call() throws Exception {
+		System.out.println("Done");
 		progText.setText("Exporting Image");
+		loading_image.setVisible(true);
 		progText.setVisible(true);
 		bar.setVisible(true);
 		bar.setProgress(0.0);
+		TimeUnit.SECONDS.sleep(1);
 		double factor = 1 / ((double) (img.getWidth() * img.getHeight()));
 		
 		BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -53,6 +60,10 @@ public class ExportTask extends Task<Void>{
 				newImage.setRGB(i, j, img.getRGB(i, j));
 				bar.setProgress(bar.getProgress() + factor);
 			}
+			
+			//if(img.getWidth() * img.getHeight() < 1000000) {
+			//	TimeUnit.MILLISECONDS.sleep(2);
+			//}
 		}
 		
 		File output_file = new File(filepath);
@@ -64,7 +75,8 @@ public class ExportTask extends Task<Void>{
 		}
 		bar.setProgress(1.0);
 		progText.setText("Image successfully exported to: " + filepath);
+		loading_image.setVisible(false);
 		return null;
 	}
-
+	
 }

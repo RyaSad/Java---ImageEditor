@@ -6,6 +6,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
@@ -55,5 +56,10 @@
       <Button fx:id="button_newPreset" layoutX="889.0" layoutY="541.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="32.0" text="+" />
       <Button fx:id="button_deletePreset" layoutX="934.0" layoutY="541.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="32.0" text="-" />
       <Button fx:id="button_randomize" layoutX="765.0" layoutY="503.0" mnemonicParsing="false" onAction="#ButtonAction" text="Randomize" />
+      <ImageView fx:id="image_loading" fitHeight="18.0" fitWidth="19.0" layoutX="592.0" layoutY="612.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@../../loading.gif" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
