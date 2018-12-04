@@ -78,26 +78,13 @@ public class MyImage{
 		
 		this.tempImage = deepCopy(this.image);
 		
-		long startTime = System.currentTimeMillis();
-		
-		
 		if(this.fp.cLevel != 1.0) {
-			System.out.println(this.fp.cLevel);
 			RescaleOp rescaleOp = new RescaleOp(this.fp.cLevel, 0, null);
 			rescaleOp.filter(tempImage, tempImage);
 		}
 		
-		
-		
-		int procs = Runtime.getRuntime().availableProcessors();
-		//runThreads(procs);
-		
-		
-		long runTime = System.currentTimeMillis() - startTime;
-		double timeSeconds = (double) runTime / 1000;
-		
-		//System.out.println("Time took: " + timeSeconds + " seconds");
-		
+		/*	Change Pixels	*/
+		runThreads(Runtime.getRuntime().availableProcessors());
 		
 		Image updatedImage = SwingFXUtils.toFXImage(tempImage, null);
 		return updatedImage;

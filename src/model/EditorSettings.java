@@ -1,9 +1,7 @@
 package model;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,22 +10,14 @@ import javafx.stage.Stage;
 
 public class EditorSettings implements Serializable{
 	
-	private Quality quality;
+	private AppData data;
 	
-	private String importPath;
-	private String exportPath;
+	private Quality quality = Quality.NORMAL;
+	
+	private String importPath = System.getProperty("user.dir");
+	private String exportPath = System.getProperty("user.dir");
 	
 	public EditorSettings() {
-		loadSettingsFromDisk();
-	}
-	
-	public void loadSettingsFromDisk() {
-		File config = new File(System.getProperty("user.dir") + "\\config");
-		
-		if(!config.exists()) {
-			return;
-		}
-		
 		
 	}
 	
@@ -35,15 +25,27 @@ public class EditorSettings implements Serializable{
 		
 	}
 	
-	private void setQuality(Quality q) {
+	public void setQuality(Quality q) {
 		this.quality = q;
+	}
+	
+	public Quality getQuality() {
+		return quality;
+	}
+	
+	public String getImportPath() {
+		return importPath;
+	}
+	
+	public String getExportPath() {
+		return exportPath;
 	}
 	
 	public void displaySettingsWindow() {
 		try {
 			Stage stage = new Stage();
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("/view/Settings.fxml"));
-			Scene scene = new Scene(root, 300, 400);
+			Scene scene = new Scene(root, 380, 400);
 			stage.setScene(scene);
 			stage.setResizable(false);
 			stage.setTitle("ImageEditor v1.5");

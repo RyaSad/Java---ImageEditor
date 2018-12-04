@@ -18,12 +18,10 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("/view/Editor.fxml"));
-			Scene scene = new Scene(root, 980, 700);
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			Scene scene = new Scene(root, 980, 685);
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			primaryStage.setTitle("ImageEditor v1.2");
-			//primaryStage.setOpacity(.9);
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -41,7 +39,6 @@ public class Main extends Application {
 	
 	
 	public static void main(String[] args) {
-
 		launch(args);
 	}
 	

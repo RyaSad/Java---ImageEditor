@@ -44,7 +44,7 @@ import model.MyImage;
 import model.Preset;
 import tasks.ExportTask;
 
-public class EditorController {
+public class EditorController extends AppData{
 	/*	Display	*/
 	@FXML
 	ImageView image_display;
@@ -179,9 +179,7 @@ public class EditorController {
 	
 	ObservableList<Preset> presets = FXCollections.observableArrayList();
 	
-	AppData data = new AppData();
 	
-	EditorSettings settings = data.importSettings();
 
 	
 	@FXML
@@ -196,6 +194,8 @@ public class EditorController {
 		text_blueValue.setText("0");
 		
 		presets.add(new DefaultPreset());
+		
+		importSettings();
 		load_presets_from_disk();
 		
 		dropdown_presets.setItems(presets);
@@ -353,6 +353,7 @@ public class EditorController {
 	            }
 	        });
 		
+		 
 		
 	}
 	
@@ -395,6 +396,7 @@ public class EditorController {
 			thisImage = new MyImage(import_file.getCanonicalPath().toString());
 			
 			try {
+				resetSliders();
 				set_filters();
 			}catch(Exception e) {
 				showError("Unable to edit this image.\n" + e.getLocalizedMessage());
@@ -410,9 +412,6 @@ public class EditorController {
 			//fxImage = updatedImage;
 			thisImage.setNewImage(reScaled);
 			image_display.setImage(updatedImage);
-			
-			
-			
 			centerImage();
 			
 		}
@@ -524,7 +523,7 @@ public class EditorController {
 		dropdown_presets.setItems(presets);
 		dropdown_presets.setValue(preset);
 		
-		data.savePreset(preset);
+		savePreset(preset);
 	}
 	
 	public void load_preset(Preset p) {
@@ -556,7 +555,7 @@ public class EditorController {
 	         paths = file.listFiles();
 	         for(File preset_file: paths) {	 
 		         String name = preset_file.getName();
-		         Preset p = data.restorePreset(name);
+		         Preset p = restorePreset(name);
 		         presets.add(p);
 	         }
 	         
@@ -672,7 +671,7 @@ public class EditorController {
 	
 	
 	public BufferedImage scaleDown(Image image) {
-		double maxP = 720.0;
+		double maxP = settings.getQuality().getQuality();
 		
 		int scaleFactor = (int) Math.round(Math.max(image.getWidth(), image.getHeight()) / maxP);
 		

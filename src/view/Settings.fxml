@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SettingsController">
    <children>
       <Text fill="#5e5e5e" layoutX="72.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&lt;&lt;Faster--------------------------Slower&gt;&gt;" textAlignment="CENTER" wrappingWidth="233.412109375">
          <font>
@@ -20,16 +21,20 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Text>
-      <HBox alignment="CENTER" layoutY="39.0" prefHeight="37.0" prefWidth="378.0" style="-fx-spacing: 15;">
+      <HBox fx:id="quality_container" alignment="CENTER" layoutY="39.0" prefHeight="37.0" prefWidth="378.0" style="-fx-spacing: 15;">
          <children>
-            <RadioButton mnemonicParsing="false" text="240p" />
-            <RadioButton mnemonicParsing="false" text="360p" />
-            <RadioButton mnemonicParsing="false" text="480p" />
-            <RadioButton mnemonicParsing="false" text="720p" />
-            <RadioButton mnemonicParsing="false" text="1080p" />
-            <RadioButton mnemonicParsing="false" text="4k" />
+            <RadioButton mnemonicParsing="false" text="240p">
+               <toggleGroup>
+                  <ToggleGroup fx:id="display_quality" />
+               </toggleGroup></RadioButton>
+            <RadioButton mnemonicParsing="false" text="360p" toggleGroup="$display_quality" />
+            <RadioButton mnemonicParsing="false" selected="true" text="480p" toggleGroup="$display_quality" />
+            <RadioButton mnemonicParsing="false" text="720p" toggleGroup="$display_quality" />
+            <RadioButton mnemonicParsing="false" text="1080p" toggleGroup="$display_quality" />
+            <RadioButton mnemonicParsing="false" text="4k" toggleGroup="$display_quality" />
          </children>
       </HBox>
       <Line endX="277.0" endY="-1.0" fill="BLACK" layoutX="100.0" layoutY="85.0" startX="-100.0" strokeWidth="0.5" />
+      <Button fx:id="button_saveAndExit" layoutX="117.0" layoutY="361.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="146.0" text="Save and Exit" />
    </children>
 </AnchorPane>

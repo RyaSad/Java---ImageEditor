@@ -43,8 +43,7 @@ public class ExportTask extends Task<Void>{
 	
 	@Override
 	protected Void call() throws Exception {
-		System.out.println("Done");
-		progText.setText("Exporting Image");
+		progText.setText("Writing Image...");
 		loading_image.setVisible(true);
 		progText.setVisible(true);
 		bar.setVisible(true);
@@ -60,21 +59,21 @@ public class ExportTask extends Task<Void>{
 				newImage.setRGB(i, j, img.getRGB(i, j));
 				bar.setProgress(bar.getProgress() + factor);
 			}
-			
-			//if(img.getWidth() * img.getHeight() < 1000000) {
-			//	TimeUnit.MILLISECONDS.sleep(2);
-			//}
 		}
 		
+		progText.setText("Saving to Disk...");
+		TimeUnit.SECONDS.sleep(1);
 		File output_file = new File(filepath);
+		
 		try {
 			ImageIO.write(newImage, "png", output_file);
 		} catch (IOException e) {
 			System.out.println("Unable to write image file.");
 			System.exit(1);
 		}
+		
 		bar.setProgress(1.0);
-		progText.setText("Image successfully exported to: " + filepath);
+		progText.setText("Exported to: " + filepath);
 		loading_image.setVisible(false);
 		return null;
 	}

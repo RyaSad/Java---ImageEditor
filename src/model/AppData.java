@@ -8,6 +8,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class AppData {
+	
+	protected static EditorSettings settings;
+	
+	
 	public void savePreset(Preset p) {
 		File file = new File(".\\presets\\" + p.toString());
 		try {
@@ -39,7 +43,7 @@ public class AppData {
 	}
     
     
-    public void exportSettings(EditorSettings settings) {
+    public void exportSettings() {
 		File file = new File(".\\config");
 		if(!file.exists()) {
 			try {
@@ -59,21 +63,20 @@ public class AppData {
 	}
     
 
-    public EditorSettings importSettings() {
+    public void importSettings() {
 		File file = new File(".\\config");
-		
+	
 		if(!file.exists()) {
-			return new EditorSettings();
+			settings = new EditorSettings();
+			exportSettings();
 		}
 		try {
 			FileInputStream fis = new FileInputStream(file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			EditorSettings settings = (EditorSettings) ois.readObject();
+			settings = (EditorSettings) ois.readObject();
 			ois.close();
-			return settings;
 		}catch (Exception e){
 			e.printStackTrace();
-			return null;
 		}
 	}
 }
