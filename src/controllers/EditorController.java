@@ -38,6 +38,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.AppData;
 import model.DefaultPreset;
+import model.EditorSettings;
 import model.FilterProperties;
 import model.MyImage;
 import model.Preset;
@@ -70,6 +71,9 @@ public class EditorController {
 	
 	@FXML
 	Button button_randomize;
+	
+	@FXML
+	Button button_settings;
 		
 	
 	/* Text	*/	
@@ -176,6 +180,8 @@ public class EditorController {
 	ObservableList<Preset> presets = FXCollections.observableArrayList();
 	
 	AppData data = new AppData();
+	
+	EditorSettings settings = data.importSettings();
 
 	
 	@FXML
@@ -193,8 +199,7 @@ public class EditorController {
 		load_presets_from_disk();
 		
 		dropdown_presets.setItems(presets);
-		dropdown_presets.setValue(presets.get(0));
-		
+		dropdown_presets.setValue(presets.get(0));		
 		
 		 dropdown_presets.valueProperty().addListener(new ChangeListener<Preset>() {
 	            public void changed(ObservableValue<? extends Preset> ov,
@@ -398,9 +403,6 @@ public class EditorController {
 			
 			Image i = new Image(import_file.toURI().toString());
 			fxImage = i;
-			image_display.setImage(i);
-			resetSliders();
-			centerImage();
 			
 			BufferedImage reScaled = scaleDown(image_display.getImage());
 			Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
@@ -409,8 +411,8 @@ public class EditorController {
 			thisImage.setNewImage(reScaled);
 			image_display.setImage(updatedImage);
 			
-			System.out.println("Width: " + updatedImage.getWidth());
-			System.out.println("Height: " + updatedImage.getHeight());
+			
+			
 			centerImage();
 			
 		}
@@ -471,6 +473,9 @@ public class EditorController {
 		}
 		else if(b == button_randomize) {
 			randomizeValues();
+		}
+		else if(b == button_settings) {
+			settings.displaySettingsWindow();
 		}
 	}
 	
@@ -679,10 +684,7 @@ public class EditorController {
 		
 		for(int i = 0; i < (int)img.getHeight(); i++) {
 			for(int j = 0; j < (int)img.getWidth(); j++) {
-			//	if(j*scaleFactor > (int) image.getWidth() || i*scaleFactor > (int) image.getHeight()) {
-			//		break;
-			//	}
-				
+
 				javafx.scene.paint.Color c = image.getPixelReader().getColor(j*scaleFactor, i*scaleFactor);
 				
 				Color cc = new Color((int)(c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
