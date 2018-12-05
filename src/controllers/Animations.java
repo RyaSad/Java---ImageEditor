@@ -28,6 +28,7 @@ public class Animations {
 	public Color BLUE = new Color(0,0,1,1);
 	
 	public Animations() {
+		/*
 		if(ALL_FX.size() == 0) {
 			
 		String dir = "C:\\Users\\ryans\\OneDrive\\eclipse-workspace\\AnimateFX-master\\AnimateFX-master\\animatefx\\src\\main\\java\\animatefx\\animation";
@@ -67,6 +68,7 @@ public class Animations {
 		}else {
 			System.out.println(ALL_FX.size());
 		}
+		*/
 	}
 	
 	public void Animate(AnimationFX fx, Node node, int cycles, Double duration, double speed) {
