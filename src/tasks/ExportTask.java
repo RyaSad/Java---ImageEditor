@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import animatefx.animation.*;
+import controllers.Animations;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Alert;
@@ -30,6 +32,8 @@ public class ExportTask extends Task<Void>{
 	
 	private ImageView loading_image;
 	
+	static Animations ANIMATIONS = new Animations();
+	
 	public ExportTask(BufferedImage img, FilterProperties fp, ProgressBar bar, Text progText, ImageView loading, String filepath) {
 		this.bar = bar;
 		this.filepath = filepath;
@@ -43,11 +47,6 @@ public class ExportTask extends Task<Void>{
 	
 	@Override
 	protected Void call() throws Exception {
-		progText.setText("Writing Image...");
-		loading_image.setVisible(true);
-		progText.setVisible(true);
-		bar.setVisible(true);
-		bar.setProgress(0.0);
 		TimeUnit.SECONDS.sleep(1);
 		double factor = 1 / ((double) (img.getWidth() * img.getHeight()));
 		
@@ -75,6 +74,10 @@ public class ExportTask extends Task<Void>{
 		bar.setProgress(1.0);
 		progText.setText("Exported to: " + filepath);
 		loading_image.setVisible(false);
+		
+		ANIMATIONS.Animate(new Bounce(), progText, 1, 0.0, 1.5);
+		ANIMATIONS.Animate(new Bounce(), bar, 1, 0.0, 1.5);
+		
 		return null;
 	}
 	

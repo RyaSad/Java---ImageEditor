@@ -53,7 +53,7 @@ public class EditorSettings implements Serializable{
 		try {
 			Stage stage = new Stage();
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("/view/Settings.fxml"));
-			Scene scene = new Scene(root, 380, 400);
+			Scene scene = new Scene(root, 368, 400);
 			stage.setScene(scene);
 			stage.setResizable(false);
 			stage.setTitle("Editor Settings");

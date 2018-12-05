@@ -2,19 +2,34 @@ package controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import animatefx.animation.*;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.AppData;
 import model.Quality;
+import tasks.FilterTask;
+import tasks.StageFadeOutTask;
 
 public class SettingsController extends AppData{
+	
+	@FXML
+	AnchorPane pane;
 	
 	@FXML
 	HBox quality_container;
@@ -39,6 +54,10 @@ public class SettingsController extends AppData{
 	
 	static Stage thisStage;
 	
+	static Animations ANIMATIONS = new Animations();
+	
+	ArrayList<AnimationFX> fx = new ArrayList<AnimationFX>();
+	
 	
 	@FXML
 	void initialize() {
@@ -51,12 +70,16 @@ public class SettingsController extends AppData{
 			case VERY_HIGH: display_quality.selectToggle((Toggle) quality_container.getChildren().get(4)); break;
 			case ULTRA: display_quality.selectToggle((Toggle) quality_container.getChildren().get(5)); break;
 		}
+		
+		
+		ANIMATIONS.Animate(new SlideInUp(), pane, 1, 0.0, 3.0);
+		
 	}
 	
 	
 	
 	@SuppressWarnings("unlikely-arg-type")
-	public void ButtonAction(ActionEvent event) {
+	public void ButtonAction(ActionEvent event) throws InterruptedException {
 		Button b = (Button) event.getSource();
 		thisStage = (Stage) b.getScene().getWindow();
 		
@@ -70,6 +93,30 @@ public class SettingsController extends AppData{
 				case 4: settings.setQuality(Quality.VERY_HIGH); break;
 				case 5: settings.setQuality(Quality.ULTRA); break;
 			}
+			
+			//ANIMATIONS.Animate(new FadeOutDownBig(), b, 1, 0.0, 2.0);
+			
+			
+		
+			/*
+			RotateOut anim = new RotateOut(pane);
+			anim.setCycleCount(1).setDelay(new Duration(0.0)).setSpeed(2.0);
+			anim.setOnFinished(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					exportSettings();
+					pending_update.setSelected(true);
+					thisStage.close();
+					
+				}
+				
+			});
+			
+			anim.play();
+			*/
+			
+			//TimeUnit.SECONDS.sleep(1);
 			
 			exportSettings();
 			pending_update.setSelected(true);

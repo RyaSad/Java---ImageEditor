@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import animatefx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -38,11 +40,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.AppData;
 import model.DefaultPreset;
 import model.FilterProperties;
 import model.MyImage;
 import model.Preset;
+import model.Quality;
 import tasks.ExportTask;
 
 public class EditorController extends AppData{
@@ -169,9 +173,6 @@ public class EditorController extends AppData{
 	ComboBox<Preset> dropdown_presets;
 	
 	
-	
-	
-	
 	Stage thisStage;
 	
 	MyImage thisImage;
@@ -179,6 +180,8 @@ public class EditorController extends AppData{
 	Image fxImage;
 	
 	ObservableList<Preset> presets = FXCollections.observableArrayList();
+	
+	static Animations ANIMATIONS = new Animations();
 	
 	
 
@@ -308,15 +311,16 @@ public class EditorController extends AppData{
 		thisStage = (Stage) b.getScene().getWindow();
 		
 		if(b == button_import) {
+			
 			File import_file = fileSelect("Select a file to import");
 			if(import_file == null) {
 				return;
 			}
+			resetSliders();
 			thisImage = new MyImage(import_file.getCanonicalPath().toString());
 			
 			try {
-				resetSliders();
-				set_filters();
+				thisImage.applyGlobalFilter(buildFilterProperties());
 			}catch(Exception e) {
 				showError("Unable to edit this image.\n" + e.getLocalizedMessage());
 				return;
@@ -325,12 +329,23 @@ public class EditorController extends AppData{
 			Image i = new Image(import_file.toURI().toString());
 			fxImage = i;
 			
-			BufferedImage reScaled = scaleDown(image_display.getImage());
+			BufferedImage reScaled = scaleDown(fxImage);
 			Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
 			
 			thisImage.setNewImage(reScaled);
-			image_display.setImage(updatedImage);
-			centerImage();
+
+			//image_display.setImage(updatedImage);
+			//centerImage();
+			//ANIMATIONS.Animate(new FadeIn(), image_display, 1, 0.0, 1.5);
+			
+			if(image_display.getImage() == null) {
+				ANIMATIONS.Animate(new FadeIn(), image_display, 1, 0.0, 1.5);
+				image_display.setImage(updatedImage);
+				ANIMATIONS.centerImage(image_display);
+			}else {
+				ANIMATIONS.CycleImages(image_display, updatedImage, 1.5);
+			}
+			
 			
 		}
 		else if(b == button_export) {
@@ -344,14 +359,35 @@ public class EditorController extends AppData{
 				return;
 			}
 			
-			BufferedImage temp = thisImage.image;
-			BufferedImage toExport = SwingFXUtils.fromFXImage(fxImage, null);
-			thisImage.image = toExport;
-	        Task<Void> exportTask = new ExportTask(toExport, buildFilterProperties(), progress_export, progress_export_text, image_loading,  filepath);
-	        Thread exportThread = new Thread(exportTask);
-	        exportThread.setDaemon(true);
-	        exportThread.start();
-	        thisImage.image = temp;
+			progress_export.setProgress(0.0);
+			FadeInUp animBar = new FadeInUp(progress_export);
+			animBar.setCycleCount(1).setDelay(new Duration(0.0)).setSpeed(2.0);
+			animBar.setOnFinished(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					BufferedImage temp = thisImage.image;
+					BufferedImage toExport = SwingFXUtils.fromFXImage(fxImage, null);
+					thisImage.image = toExport;
+			        Task<Void> exportTask = new ExportTask(toExport, buildFilterProperties(), progress_export, progress_export_text, image_loading,  filepath);
+			        Thread exportThread = new Thread(exportTask);
+			        exportThread.setDaemon(true);
+			        exportThread.start();
+			        thisImage.image = temp;
+				}
+				
+			});
+			
+			ANIMATIONS.Animate(new FadeInUp(), progress_export_text, 1, 0.0, 2.0);
+				progress_export_text.setText("Writing Image...");
+				progress_export_text.setVisible(true);
+				
+			ANIMATIONS.Animate(new FadeInUp(), image_loading, 1, 0.0, 2.0);
+				image_loading.setVisible(true);
+				
+			animBar.play();
+				progress_export.setVisible(true);
+				
 		}
 		else if(b == button_openWorkspace) {
 			Runtime.getRuntime().exec("explorer.exe " + System.getProperty("user.dir"));
@@ -389,6 +425,8 @@ public class EditorController extends AppData{
 			 dropdown_presets.setValue(presets.get(0));
 		}
 		else if(b == button_randomize) {
+			//ANIMATIONS.Animate(new JackInTheBox(), button_randomize, 1, 0.0, 2.0);
+			ANIMATIONS.RandomAnimation(button_randomize, 1, 0.0, 1.0);
 			randomizeValues();
 		}
 		else if(b == button_settings) {
@@ -403,7 +441,8 @@ public class EditorController extends AppData{
 		
 		thisImage.setNewImage(reScaled);
 		image_display.setImage(updatedImage);
-		centerImage();
+		ANIMATIONS.centerImage(image_display);
+		set_filters();
 	}
 	
 	public void randomizeValues() {
@@ -548,7 +587,6 @@ public class EditorController extends AppData{
         return path;
 	}
 	
-	
 	public String inputBox(String title, String prompt) {
 		 TextInputDialog inputBox = new TextInputDialog();
 		 inputBox.setTitle(title);
@@ -563,37 +601,11 @@ public class EditorController extends AppData{
 		alert.showAndWait();
 	 }
 	
-	public void centerImage() {
-        Image img = image_display.getImage();
-        if (img != null) {
-            double w = 0;
-            double h = 0;
-
-            double ratioX = image_display.getFitWidth() / img.getWidth();
-            double ratioY = image_display.getFitHeight() / img.getHeight();
-
-            double reducCoeff = 0;
-            if(ratioX >= ratioY) {
-                reducCoeff = ratioY;
-            } else {
-                reducCoeff = ratioX;
-            }
-
-            w = img.getWidth() * reducCoeff;
-            h = img.getHeight() * reducCoeff;
-
-            image_display.setX((image_display.getFitWidth() - w) / 2);
-            image_display.setY((image_display.getFitHeight() - h) / 2);
-
-        }
-    }
-	
 	public FilterProperties buildFilterProperties() {
 		return new FilterProperties((int)slider_red.getValue(), (int)slider_green.getValue(), (int)slider_blue.getValue(),
 				(float) (slider_contrast.getValue() + 1), (float) slider_brightness.getValue(), (float) slider_saturation.getValue(), (float) slider_hue.getValue(),
 				isToggle(toggle_greyscale), isToggle(toggle_sepia), isToggle(toggle_invert), (float) slider_scramble.getValue());
 	}
-	
 	
 	public BufferedImage scaleDown(Image image) {
 		double maxP = settings.getQuality().getQuality();
@@ -616,7 +628,6 @@ public class EditorController extends AppData{
 				img.setRGB(j, i, cc.getRGB());
 			}
 		}
-		
 		return img;
 	}
 }
