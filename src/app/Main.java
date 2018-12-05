@@ -18,7 +18,7 @@ public class Main extends Application {
 			Scene scene = new Scene(root, 980, 685);
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
-			primaryStage.setTitle("ImageEditor v2.0");
+			primaryStage.setTitle("ImageEditor v2.1");
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

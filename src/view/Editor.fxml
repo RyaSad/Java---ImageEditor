@@ -9,13 +9,117 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
+<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
    <children>
+      <AnchorPane fx:id="settings_pane" layoutY="700.0" prefHeight="260.0" prefWidth="1000.0" style="-fx-background-color: white;">
+          <children>
+      <Text layoutX="375.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="&lt;&lt;Faster--------------------------Slower&gt;&gt;" textAlignment="CENTER" wrappingWidth="233.412109375">
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop color="#00ccc8" />
+                  <Stop color="#00ccc8" offset="0.007662835249042145" />
+                  <Stop color="#00ff1e" offset="0.23000355492356908" />
+                  <Stop color="#e6ff00" offset="0.421771931903464" />
+                  <Stop color="#ff7400" offset="0.6204131611170359" />
+                  <Stop color="RED" offset="0.7965793735434685" />
+                  <Stop color="MAGENTA" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Text>
+      <Text layoutX="447.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Display Quality">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Text>
+      <HBox fx:id="quality_container" alignment="CENTER" layoutX="298.0" layoutY="38.0" prefHeight="37.0" prefWidth="378.0" style="-fx-spacing: 15;">
+         <children>
+            <RadioButton mnemonicParsing="false" text="240p">
+               <toggleGroup>
+                  <ToggleGroup fx:id="display_quality" />
+               </toggleGroup>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0" startX="0.01904761904761905">
+                     <stops>
+                        <Stop color="#00b2a3" />
+                        <Stop color="#02a40f" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+            <RadioButton mnemonicParsing="false" text="360p" toggleGroup="$display_quality">
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop color="#01a10c" />
+                        <Stop color="#86d00f" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+            <RadioButton mnemonicParsing="false" selected="true" text="480p" toggleGroup="$display_quality">
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop color="#86d00f" />
+                        <Stop color="#c4b038" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+            <RadioButton mnemonicParsing="false" text="720p" toggleGroup="$display_quality">
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0" startX="0.4380952380952381">
+                     <stops>
+                        <Stop color="#c4b038" />
+                        <Stop color="#ff4c00" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+            <RadioButton mnemonicParsing="false" text="1080p" toggleGroup="$display_quality">
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0" startX="0.009523809523809525">
+                     <stops>
+                        <Stop color="#ff7e00" />
+                        <Stop color="#f70202" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+            <RadioButton mnemonicParsing="false" text="4k" toggleGroup="$display_quality">
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop color="RED" />
+                        <Stop color="#ce00ff" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </textFill></RadioButton>
+         </children>
+      </HBox>
+      <Line endX="277.0" endY="-1.0" fill="BLACK" layoutX="402.0" layoutY="84.0" startX="-100.0" strokeWidth="0.5" />
+      <Button fx:id="button_saveAndExit" layoutX="418.0" layoutY="225.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="146.0" text="Save and Exit" />
+      <Text fill="#5c5c5c" layoutX="407.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image Import Initial Directory">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font></Text>
+      <Button fx:id="button_selectImportFolder" layoutX="362.0" layoutY="110.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="100.0" text="Select Folder" />
+      <Line endX="277.0" endY="-1.0" fill="BLACK" layoutX="403.0" layoutY="147.0" startX="-100.0" strokeWidth="0.5" />
+      <Text fill="#5c5c5c" layoutX="410.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Image Export Initial Directory">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font></Text>
+      <Button fx:id="button_selectExportFolder" layoutX="362.0" layoutY="179.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="100.0" text="Select Folder" />
+      <Line endX="277.0" endY="-1.0" fill="BLACK" layoutX="402.0" layoutY="214.0" startX="-100.0" strokeWidth="0.5" />
+      <Button fx:id="button_defaultImport" layoutX="515.0" layoutY="110.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="100.0" text="Set to Default" />
+      <Button fx:id="button_defaultExport" layoutX="515.0" layoutY="179.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="100.0" text="Set to Default" />
+      <Text layoutX="485.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="or" />
+      <Text layoutX="485.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="or" />
+   </children>
+      </AnchorPane>
       <Slider fx:id="slider_red" blockIncrement="1.0" layoutX="64.0" layoutY="448.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
       <Slider fx:id="slider_green" blockIncrement="1.0" layoutX="64.0" layoutY="482.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
       <Slider fx:id="slider_blue" blockIncrement="1.0" layoutX="64.0" layoutY="515.0" max="255.0" min="-255.0" prefHeight="14.0" prefWidth="173.0" />
@@ -64,8 +168,7 @@
             <Image url="@../../loading.gif" />
          </image>
       </ImageView>
-      <Button fx:id="button_settings" layoutX="918.0" layoutY="2.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="64.0" text="Settings" />
-      <Line endX="894.5" layoutX="96.0" layoutY="431.0" opacity="0.52" startX="-100.0">
+      <Line fx:id="rainbow_divider" endX="894.5" layoutX="96.0" layoutY="431.0" opacity="0.3" startX="-100.0" strokeWidth="2.0">
          <stroke>
             <LinearGradient endX="1.0" endY="1.0">
                <stops>
@@ -79,5 +182,6 @@
                </stops>
             </LinearGradient>
          </stroke></Line>
+      <Button fx:id="button_settingsToggle" layoutX="930.0" layoutY="404.0" mnemonicParsing="false" onAction="#ButtonAction" text="Settings" />
    </children>
 </AnchorPane>

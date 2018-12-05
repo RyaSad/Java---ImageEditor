@@ -86,6 +86,15 @@ public class Animations {
 		fx.play();
 	}
 	
+	public void Animate(AnimationFX fx, Node node, int cycles, Double duration, double speed, EventHandler<ActionEvent> onFinish) {
+		fx.setNode(node);
+		fx.setCycleCount(cycles);
+		fx.setDelay(new Duration(duration));
+		fx.setSpeed(speed);
+		fx.setOnFinished(onFinish);
+		fx.play();
+	}
+	
 	public AnimationFX BuildAnimation(AnimationFX fx, Node node, int cycles, Double duration, double speed) {
 		fx.setNode(node);
 		fx.setCycleCount(cycles);

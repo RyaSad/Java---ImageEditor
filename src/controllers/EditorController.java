@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import animatefx.animation.*;
 import javafx.beans.value.ChangeListener;
@@ -31,13 +30,16 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -56,6 +58,15 @@ public class EditorController extends AppData{
 	
 	@FXML
 	ImageView image_loading;
+	
+	@FXML
+	AnchorPane settings_pane;
+	
+	@FXML
+	AnchorPane main_pane;
+	
+	@FXML
+	Line rainbow_divider;
 	
 	
 	/*	Buttons	*/
@@ -78,7 +89,7 @@ public class EditorController extends AppData{
 	Button button_randomize;
 	
 	@FXML
-	Button button_settings;
+	Button button_settingsToggle;
 		
 	
 	/* Text	*/	
@@ -173,6 +184,30 @@ public class EditorController extends AppData{
 	ComboBox<Preset> dropdown_presets;
 	
 	
+	
+	/*	Settings Nodes	*/
+	@FXML
+	HBox quality_container;
+	
+	@FXML
+	Button button_saveAndExit;
+	
+	@FXML
+	Button button_selectImportFolder;
+	
+	@FXML
+	Button button_selectExportFolder;
+	
+	@FXML
+	Button button_defaultImport;
+	
+	@FXML
+	Button button_defaultExport;
+	
+	@FXML
+	ToggleGroup display_quality;
+	
+	
 	Stage thisStage;
 	
 	MyImage thisImage;
@@ -188,6 +223,7 @@ public class EditorController extends AppData{
 	
 	@FXML
 	void initialize() {
+		
 		
 		importSettings();
 		pending_update.setSelected(false);
@@ -242,6 +278,16 @@ public class EditorController extends AppData{
 		 slider_scramble.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_scramble, 0.0));
 		 
 		 fx_group.selectedToggleProperty().addListener(toggleListener());
+		 
+		 
+		 switch(settings.getQuality()) {
+			case VERY_LOW: display_quality.selectToggle((Toggle) quality_container.getChildren().get(0)); break;
+			case LOW: display_quality.selectToggle((Toggle) quality_container.getChildren().get(1)); break;
+			case NORMAL: display_quality.selectToggle((Toggle) quality_container.getChildren().get(2)); break;
+			case HIGH: display_quality.selectToggle((Toggle) quality_container.getChildren().get(3)); break;
+			case VERY_HIGH: display_quality.selectToggle((Toggle) quality_container.getChildren().get(4)); break;
+			case ULTRA: display_quality.selectToggle((Toggle) quality_container.getChildren().get(5)); break;
+		}
 		
 	}
 	
@@ -306,6 +352,7 @@ public class EditorController extends AppData{
 		return fx_group.getSelectedToggle().equals(rb);
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public void ButtonAction(ActionEvent event) throws IOException, InterruptedException {
 		Button b = (Button) event.getSource();
 		thisStage = (Stage) b.getScene().getWindow();
@@ -334,10 +381,6 @@ public class EditorController extends AppData{
 			
 			thisImage.setNewImage(reScaled);
 
-			//image_display.setImage(updatedImage);
-			//centerImage();
-			//ANIMATIONS.Animate(new FadeIn(), image_display, 1, 0.0, 1.5);
-			
 			if(image_display.getImage() == null) {
 				ANIMATIONS.Animate(new FadeIn(), image_display, 1, 0.0, 1.5);
 				image_display.setImage(updatedImage);
@@ -429,13 +472,68 @@ public class EditorController extends AppData{
 			//ANIMATIONS.RandomAnimation(button_randomize, 1, 0.0, 1.0);
 			randomizeValues();
 		}
-		else if(b == button_settings) {
-			settings.displaySettingsWindow();
+		else if(b == button_settingsToggle) {
+			ANIMATIONS.Animate(new FadeInUp(), settings_pane, 1, 0.0, 1.5);
+			settings_pane.setLayoutY(434.0);
+			HideEditor();
+		}
+		else if(b == button_saveAndExit) {
+			
+			switch(quality_container.getChildren().indexOf(display_quality.getSelectedToggle())) {
+				case 0: settings.setQuality(Quality.VERY_LOW); break;
+				case 1: settings.setQuality(Quality.LOW); break;
+				case 2: settings.setQuality(Quality.NORMAL); break;
+				case 3: settings.setQuality(Quality.HIGH); break;
+				case 4: settings.setQuality(Quality.VERY_HIGH); break;
+				case 5: settings.setQuality(Quality.ULTRA); break;
+			}
+		
+			ANIMATIONS.Animate(new FadeOutDown(), settings_pane, 1, 0.0, 2.0, new EventHandler<ActionEvent>() {
+			
+				@Override
+				public void handle(ActionEvent event) {
+					refreshQuality();
+					exportSettings();
+					settings_pane.setLayoutY(1000.0);
+				}
+				
+			});
+			ShowEditor();
+			
+		}
+		else if(b == button_selectImportFolder) {
+			File dir = chooseDirectory();
+			if(dir == null) { return; }
+			
+			try {
+				settings.setImportPath(dir.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(b == button_selectExportFolder) {
+			File dir = chooseDirectory();
+			if(dir == null) { return; }
+			
+			try {
+				settings.setExportPath(dir.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(b == button_defaultImport) {
+			settings.setImportPath(System.getProperty("user.dir"));
+		}
+		else if(b == button_defaultExport) {
+			settings.setExportPath(System.getProperty("user.dir"));
 		}
 	}
 	
 	
 	public void refreshQuality() {
+		if(fxImage == null) {
+			return;
+		}
 		BufferedImage reScaled = scaleDown(fxImage);
 		Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
 		
@@ -629,5 +727,36 @@ public class EditorController extends AppData{
 			}
 		}
 		return img;
+	}
+	
+	private File chooseDirectory() {
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setTitle("Select a folder.");
+		return directoryChooser.showDialog(thisStage);
+		
+	}
+	
+	public void HideEditor() {
+		for(Node n: main_pane.getChildren()){
+			if(n != settings_pane && n!= image_display && n!= button_settingsToggle && n!= rainbow_divider) {
+				ANIMATIONS.Animate(new FadeOut(), n, 1, 0.0, 1.5, new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						n.setVisible(false);
+					}
+					
+				});
+			}
+		}
+	}
+	
+	public void ShowEditor() {
+		for(Node n: main_pane.getChildren()) {
+			if(n != progress_export && n != progress_export_text && n != image_loading && n != settings_pane && n!= image_display && n!= button_settingsToggle && n!= rainbow_divider) {
+				ANIMATIONS.Animate(new FadeIn(), n, 1, 0.0, 1.5);
+				n.setVisible(true);
+			}
+		}
 	}
 }

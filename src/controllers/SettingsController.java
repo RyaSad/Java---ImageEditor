@@ -149,6 +149,7 @@ public class SettingsController extends AppData{
 		else if(b == button_defaultExport) {
 			settings.setExportPath(System.getProperty("user.dir"));
 		}
+		
 	}
 	
 	
