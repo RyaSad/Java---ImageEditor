@@ -425,8 +425,8 @@ public class EditorController extends AppData{
 			 dropdown_presets.setValue(presets.get(0));
 		}
 		else if(b == button_randomize) {
-			//ANIMATIONS.Animate(new JackInTheBox(), button_randomize, 1, 0.0, 2.0);
-			ANIMATIONS.RandomAnimation(button_randomize, 1, 0.0, 1.0);
+			ANIMATIONS.Animate(new JackInTheBox(), button_randomize, 1, 0.0, 2.0);
+			//ANIMATIONS.RandomAnimation(button_randomize, 1, 0.0, 1.0);
 			randomizeValues();
 		}
 		else if(b == button_settings) {

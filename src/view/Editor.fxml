@@ -9,6 +9,9 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="980.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
@@ -22,7 +25,7 @@
       <Text fill="#0028ff" layoutX="37.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Blue" />
       <ProgressBar fx:id="progress_export" layoutX="391.0" layoutY="622.0" prefWidth="200.0" progress="0.0" visible="false" />
       <Text fx:id="progress_export_text" layoutX="15.0" layoutY="608.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Exporting Image" textAlignment="CENTER" visible="false" wrappingWidth="952.9999886751175" />
-      <ImageView fx:id="image_display" fitHeight="420.0" fitWidth="820.0" layoutX="82.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="image_display" fitHeight="420.0" fitWidth="820.0" layoutX="83.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="button_import" layoutX="858.0" layoutY="652.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="34.0" prefWidth="110.0" text="Import Image" />
       <Text fx:id="text_redValue" layoutX="242.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
       <Text fx:id="text_greenValue" layoutX="242.0" layoutY="493.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
@@ -62,5 +65,19 @@
          </image>
       </ImageView>
       <Button fx:id="button_settings" layoutX="918.0" layoutY="2.0" mnemonicParsing="false" onAction="#ButtonAction" prefHeight="25.0" prefWidth="64.0" text="Settings" />
+      <Line endX="894.5" layoutX="96.0" layoutY="431.0" opacity="0.52" startX="-100.0">
+         <stroke>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop color="RED" />
+                  <Stop color="RED" offset="0.007662835249042145" />
+                  <Stop color="#ff9b00" offset="0.21120195915787812" />
+                  <Stop color="#ffe800" offset="0.39834893549788675" />
+                  <Stop color="#1dff00" offset="0.6076944345696567" />
+                  <Stop color="#0078ff" offset="0.7994628115495515" />
+                  <Stop color="#ea00ff" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </stroke></Line>
    </children>
 </AnchorPane>
