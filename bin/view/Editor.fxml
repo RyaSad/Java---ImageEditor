@@ -168,7 +168,7 @@
             <Image url="@../../loading.gif" />
          </image>
       </ImageView>
-      <Line fx:id="rainbow_divider" endX="894.5" layoutX="96.0" layoutY="431.0" opacity="0.3" startX="-100.0" strokeWidth="2.0">
+      <Line fx:id="rainbow_divider" endX="894.5" layoutX="96.0" layoutY="431.0" opacity="0.4" startX="-100.0" strokeWidth="2.0">
          <stroke>
             <LinearGradient endX="1.0" endY="1.0">
                <stops>
