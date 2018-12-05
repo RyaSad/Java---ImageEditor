@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javafx.scene.control.ToggleButton;
+
 public class AppData {
 	
 	protected static EditorSettings settings;
+	
+	protected static ToggleButton pending_update = new ToggleButton();
 	
 	
 	public void savePreset(Preset p) {

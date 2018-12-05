@@ -17,6 +17,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -28,6 +29,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,7 +40,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.AppData;
 import model.DefaultPreset;
-import model.EditorSettings;
 import model.FilterProperties;
 import model.MyImage;
 import model.Preset;
@@ -185,19 +186,11 @@ public class EditorController extends AppData{
 	@FXML
 	void initialize() {
 		
-		dropdown_presets.setEditable(false);
-		progress_export_text.setVisible(false);
-		progress_export.setVisible(false);
-		
-		text_redValue.setText("0");
-		text_greenValue.setText("0");
-		text_blueValue.setText("0");
+		importSettings();
+		pending_update.setSelected(false);
 		
 		presets.add(new DefaultPreset());
-		
-		importSettings();
 		load_presets_from_disk();
-		
 		dropdown_presets.setItems(presets);
 		dropdown_presets.setValue(presets.get(0));		
 		
@@ -207,154 +200,81 @@ public class EditorController extends AppData{
 	                    load_preset(new_val);
 	            }
 	        });
-		
-		
-		 slider_red.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_redValue.setText(String.format("%.0f", new_val));
-	                    set_filters();
-	            }
-	        });
 		 
-		 slider_red.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_red.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_green.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_greenValue.setText(String.format("%.0f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_green.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_green.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_blue.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_blueValue.setText(String.format("%.0f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_blue.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_blue.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_contrast.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_contrastValue.setText(String.format("%.2f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_contrast.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_contrast.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_brightness.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_brightnessValue.setText(String.format("%.2f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_brightness.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_brightness.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_saturation.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_saturationValue.setText(String.format("%.2f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_saturation.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_saturation.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_hue.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_hueValue.setText(String.format("%.2f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_hue.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_hue.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 slider_scramble.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                    text_scrambleValue.setText(String.format("%.2f", new_val));
-	                    set_filters();
-	            }
-	        });
-		 
-		 slider_scramble.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			    @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.MIDDLE)){
-			        	slider_scramble.setValue(0.0);
-			        }
-			    }
-			});
-		 
-		 
-		 fx_group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-	            public void changed(ObservableValue<? extends Toggle> ov,
-	            		Toggle old_val, Toggle new_val) {
-	                    set_filters();
-	            }
-	        });
-		
+		 pending_update.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> ov,
+            		Boolean old_val, Boolean new_val) {
+            	
+            		pending_update.setSelected(false);
+                    if(new_val == true && fxImage != null) {
+                    	refreshQuality();
+                    	
+                    }
+            }
+		 });
 		 
 		
+		 slider_red.valueProperty().addListener(sliderListener(text_redValue, "%.0f"));
+		 slider_red.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_red, 0.0));
+
+		 slider_green.valueProperty().addListener(sliderListener(text_greenValue, "%.0f"));
+		 slider_green.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_green, 0.0));
+
+		 slider_blue.valueProperty().addListener(sliderListener(text_blueValue, "%.0f"));
+		 slider_blue.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_blue, 0.0));
+
+		 slider_contrast.valueProperty().addListener(sliderListener(text_contrastValue, "%.2f"));
+		 slider_contrast.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_contrast, 0.0));
+		 
+		 slider_brightness.valueProperty().addListener(sliderListener(text_brightnessValue, "%.2f"));
+		 slider_brightness.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_brightness, 0.0));
+		 
+		 slider_saturation.valueProperty().addListener(sliderListener(text_saturationValue, "%.2f"));
+		 slider_saturation.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_saturation, 0.0));
+
+		 slider_hue.valueProperty().addListener(sliderListener(text_hueValue, "%.2f"));
+		 slider_hue.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_hue, 0.0));
+		 
+		 slider_scramble.valueProperty().addListener(sliderListener(text_scrambleValue, "%.2f"));
+		 slider_scramble.setOnMouseClicked(mouseEvent(MouseButton.MIDDLE, 1, slider_scramble, 0.0));
+		 
+		 fx_group.selectedToggleProperty().addListener(toggleListener());
+		
+	}
+	
+	private ChangeListener<Number> sliderListener(Text value_text, String format){
+		return new ChangeListener<Number>() {
+	            public void changed(ObservableValue<? extends Number> ov,
+	                Number old_val, Number new_val) {
+	                    value_text.setText(String.format(format, new_val));
+	                    set_filters();
+	            }
+	        };
+	}
+	
+	private ChangeListener<Toggle> toggleListener(){
+		
+		return new ChangeListener<Toggle>() {
+            public void changed(ObservableValue<? extends Toggle> ov,
+            		Toggle old_val, Toggle new_val) {
+                    set_filters();
+            }
+        };
+        
+	}
+	
+	private EventHandler<MouseEvent> mouseEvent(MouseButton button, int click_count, Node target_node, double newValue){
+		return new EventHandler<MouseEvent>() {
+		    @Override
+		    public void handle(MouseEvent mouseEvent) {
+		        if(mouseEvent.getButton().equals(button) && mouseEvent.getClickCount() == click_count){
+		        	if(target_node instanceof Slider) {
+		        		Slider s = (Slider) target_node;
+		        		s.setValue(newValue);
+		        	}
+		        }
+		    }
+		};
 	}
 	
 	private void set_filters() {
@@ -370,7 +290,6 @@ public class EditorController extends AppData{
 		}
 		
 		Image i = thisImage.applyGlobalFilter(buildFilterProperties());
-		//fxImage = i;
 		image_display.setImage(i);
 	}
 	
@@ -409,7 +328,6 @@ public class EditorController extends AppData{
 			BufferedImage reScaled = scaleDown(image_display.getImage());
 			Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
 			
-			//fxImage = updatedImage;
 			thisImage.setNewImage(reScaled);
 			image_display.setImage(updatedImage);
 			centerImage();
@@ -478,9 +396,18 @@ public class EditorController extends AppData{
 		}
 	}
 	
+	
+	public void refreshQuality() {
+		BufferedImage reScaled = scaleDown(fxImage);
+		Image updatedImage = SwingFXUtils.toFXImage(reScaled, null);
+		
+		thisImage.setNewImage(reScaled);
+		image_display.setImage(updatedImage);
+		centerImage();
+	}
+	
 	public void randomizeValues() {
 		Random rand = new Random();
-		
 		slider_red.setValue((2*rand.nextDouble() - 1)* 255);
 		slider_green.setValue((2*rand.nextDouble()-1) * 255);
 		slider_blue.setValue((2*rand.nextDouble()-1) * 255);
@@ -488,8 +415,6 @@ public class EditorController extends AppData{
 		slider_saturation.setValue(2*rand.nextDouble()-1);
 		slider_contrast.setValue(2*rand.nextDouble()-1);
 		slider_brightness.setValue(2*rand.nextDouble()-1);
-		
-		//slider_scramble.setValue(rand.nextDouble());
 	}
 	
 	public void createPreset(String name) {
@@ -597,7 +522,7 @@ public class EditorController extends AppData{
 	public File fileSelect(String title) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		fileChooser.setInitialDirectory(new File(settings.getImportPath()));
 		String imageExtensions[]= {"*.png","*.jpg"};
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", imageExtensions));
 		
@@ -608,8 +533,8 @@ public class EditorController extends AppData{
 	public String fileSave() {
 		FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export image");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        String imageExtensions[]= {"*.png","*.jpg"};
+        fileChooser.setInitialDirectory(new File(settings.getExportPath()));
+        String imageExtensions[]= {"*.png"};
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", imageExtensions));
 		
 		File file = fileChooser.showSaveDialog(thisStage);

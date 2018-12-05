@@ -1,11 +1,15 @@
 package controllers;
 
+import java.io.File;
+import java.io.IOException;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import model.AppData;
 import model.Quality;
@@ -19,7 +23,21 @@ public class SettingsController extends AppData{
 	Button button_saveAndExit;
 	
 	@FXML
+	Button button_selectImportFolder;
+	
+	@FXML
+	Button button_selectExportFolder;
+	
+	@FXML
+	Button button_defaultImport;
+	
+	@FXML
+	Button button_defaultExport;
+	
+	@FXML
 	ToggleGroup display_quality;
+	
+	static Stage thisStage;
 	
 	
 	@FXML
@@ -40,6 +58,7 @@ public class SettingsController extends AppData{
 	@SuppressWarnings("unlikely-arg-type")
 	public void ButtonAction(ActionEvent event) {
 		Button b = (Button) event.getSource();
+		thisStage = (Stage) b.getScene().getWindow();
 		
 		if(b == button_saveAndExit) {
 			
@@ -52,12 +71,44 @@ public class SettingsController extends AppData{
 				case 5: settings.setQuality(Quality.ULTRA); break;
 			}
 			
-			
-			Stage stage = (Stage) b.getScene().getWindow();
-			
-			stage.close();
 			exportSettings();
+			pending_update.setSelected(true);
+			thisStage.close();
+			
+		}
+		else if(b == button_selectImportFolder) {
+			File dir = chooseDirectory();
+			if(dir == null) { return; }
+			
+			try {
+				settings.setImportPath(dir.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(b == button_selectExportFolder) {
+			File dir = chooseDirectory();
+			if(dir == null) { return; }
+			
+			try {
+				settings.setExportPath(dir.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(b == button_defaultImport) {
+			settings.setImportPath(System.getProperty("user.dir"));
+		}
+		else if(b == button_defaultExport) {
+			settings.setExportPath(System.getProperty("user.dir"));
 		}
 	}
-
+	
+	
+	private File chooseDirectory() {
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setTitle("Select a folder.");
+		return directoryChooser.showDialog(thisStage);
+		
+	}
 }

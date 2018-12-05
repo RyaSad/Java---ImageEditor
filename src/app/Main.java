@@ -1,8 +1,5 @@
 package app;
 	
-import java.beans.Statement;
-import java.util.Random;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -21,12 +18,11 @@ public class Main extends Application {
 			Scene scene = new Scene(root, 980, 685);
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
-			primaryStage.setTitle("ImageEditor v1.2");
+			primaryStage.setTitle("ImageEditor v1.5");
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 		    @Override
@@ -37,13 +33,10 @@ public class Main extends Application {
 		});
 	}
 	
-	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
-
-
 }
 
 

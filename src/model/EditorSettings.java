@@ -41,6 +41,14 @@ public class EditorSettings implements Serializable{
 		return exportPath;
 	}
 	
+	public void setImportPath(String path) {
+		this.importPath = path;
+	}
+	
+	public void setExportPath(String path) {
+		this.exportPath = path;
+	}
+	
 	public void displaySettingsWindow() {
 		try {
 			Stage stage = new Stage();
@@ -48,7 +56,7 @@ public class EditorSettings implements Serializable{
 			Scene scene = new Scene(root, 380, 400);
 			stage.setScene(scene);
 			stage.setResizable(false);
-			stage.setTitle("ImageEditor v1.5");
+			stage.setTitle("Editor Settings");
 			stage.showAndWait();
 		} catch(Exception e) {
 			e.printStackTrace();
